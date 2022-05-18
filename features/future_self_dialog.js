@@ -1,5 +1,5 @@
 const { BotkitConversation } = require('botkit');
-
+const {save_smoker_words, save_mover_words} = require('../actions/actions.js')
 module.exports = function(controller) {
     // define the conversation
     const dialog = new BotkitConversation('dialog', controller);
@@ -20,6 +20,7 @@ module.exports = function(controller) {
         {
             pattern: 'ja',
             handler: async function(answer, convo, bot) {
+                save_smoker_words(convo.vars.smoker_words)
                 await convo.gotoThread('why_smoker_words_thread');
             }
         },
@@ -51,7 +52,6 @@ module.exports = function(controller) {
                         },
                         key=null, thread_name='why_smoker_words_thread');
 
-
     // ask_mover_words_thread
     dialog.addMessage('We gaan nu dezelfde oefening doen voor bewegen. ...', thread_name='ask_mover_words_thread')
     dialog.addQuestion('Welke woorden vind jij passen bij bewegen? Bewegen is...?',
@@ -65,7 +65,8 @@ module.exports = function(controller) {
         {
             pattern: 'ja',
             handler: async function(answer, convo, bot) {
-                await convo.gotoThread('likes_tacos');
+                save_mover_words(convo.vars.mover_words)
+                await convo.gotoThread('done_thread');
             }
         },
         {
@@ -83,8 +84,8 @@ module.exports = function(controller) {
         }
     ], key=null, thread_name='confirm_mover_words_threat');
 
-    // define a 'likes_tacos' thread
-    dialog.addMessage('HOORAY TACOS', 'likes_tacos');
+    // done_thread
+    dialog.addMessage('klaar', 'done_thread');
 
     // handle the end of the conversation
     dialog.after(async(results, bot) => {

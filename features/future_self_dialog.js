@@ -6,20 +6,50 @@ module.exports = function(controller) {
 
     dialog.say('Vandaag gaan wij een leuke oefening doen die je gaat helpen te stoppen met roken en genoeg te bewegen. ...');
     dialog.say('bla bla ...');
+    dialog.addAction('ask_smoker_words_thread')
 
+    // ask_smoker_words_thread
     dialog.addQuestion(
-    {text: 'Welke woorden passen bij jou als roker? Roken is...?', action: 'confirm_thread'},
+    'Welke woorden passen bij jou als roker? Roken is...?',
     async(answer) => {
         // do nothing.
-    }, {key: 'smoker_words'});
+    }, {key: 'smoker_words'}, 'ask_smoker_words_thread');
+    dialog.addAction('confirm_smoker_words_threat', 'ask_smoker_words_thread')
 
-    dialog.addMessage({
-        text: 'Anyways, moving on...',
-        action: 'confirm_thread',
-    });
-
-    // collect a value with conditional actions
+    // confirm_smoker_words_threat
     dialog.addQuestion('Je hebt {{vars.smoker_words}} gekozen, klopt dat?', [
+        {
+            pattern: 'ja',
+            handler: async function(answer, convo, bot) {
+                await convo.gotoThread('ask_mover_words_thread');
+            }
+        },
+        {
+            pattern: 'nee',
+            handler: async function(answer, convo, bot) {
+                await convo.gotoThread('ask_smoker_words_thread');
+            }
+        },
+        {
+            default: true,
+            handler: async function(answer, convo, bot) {
+                bot.say('Kies alsjeblieft uit "ja" of "nee"');
+                await convo.gotoThread('confirm_smoker_words_threat');
+            }
+        }
+    ],{}, 'confirm_smoker_words_threat');
+
+    // ask_mover_words_thread
+    dialog.addMessage('We gaan nu dezelfde oefening doen voor bewegen. ...', 'ask_mover_words_thread')
+    dialog.addQuestion(
+    'Welke woorden vind jij passen bij bewegen? Bewegen is...?',
+    async(answer) => {
+        // do nothing.
+    }, {key: 'mover_words'}, 'ask_mover_words_thread');
+    dialog.addAction('confirm_mover_words_threat', 'ask_mover_words_thread')
+
+    // confirm_smoker_words_threat
+    dialog.addQuestion('Je hebt {{vars.mover_words}} gekozen, klopt dat?', [
         {
             pattern: 'ja',
             handler: async function(answer, convo, bot) {
@@ -29,23 +59,20 @@ module.exports = function(controller) {
         {
             pattern: 'nee',
             handler: async function(answer, convo, bot) {
-                await convo.gotoThread('hates_life');
+                await convo.gotoThread('ask_mover_words_thread');
             }
         },
         {
             default: true,
             handler: async function(answer, convo, bot) {
                 bot.say('Kies alsjeblieft uit "ja" of "nee"');
-                await convo.gotoThread('confirm_thread');
+                await convo.gotoThread('confirm_mover_words_threat');
             }
         }
-    ],{}, 'confirm_thread');
+    ],{}, 'confirm_mover_words_threat');
 
     // define a 'likes_tacos' thread
     dialog.addMessage('HOORAY TACOS', 'likes_tacos');
-
-    // define a 'hates_life' thread
-    dialog.addMessage('TOO BAD!', 'hates_life');
 
     // handle the end of the conversation
     dialog.after(async(results, bot) => {

@@ -9,12 +9,11 @@ module.exports = function(controller) {
     dialog.addAction('ask_smoker_words_thread')
 
     // ask_smoker_words_thread
-    dialog.addQuestion(
-    'Welke woorden passen bij jou als roker? Roken is...?',
-    async(answer) => {
-        // do nothing.
-    }, {key: 'smoker_words'}, 'ask_smoker_words_thread');
-    dialog.addAction('confirm_smoker_words_threat', 'ask_smoker_words_thread')
+    dialog.addQuestion('Welke woorden passen bij jou als roker? Roken is...?',
+        handlers=[],
+        key='smoker_words',
+        thread_name='ask_smoker_words_thread');
+    dialog.addAction(action='confirm_smoker_words_threat', thread_name='ask_smoker_words_thread')
 
     // confirm_smoker_words_threat
     dialog.addQuestion('Je hebt {{vars.smoker_words}} gekozen, klopt dat?', [
@@ -37,16 +36,15 @@ module.exports = function(controller) {
                 await convo.gotoThread('confirm_smoker_words_threat');
             }
         }
-    ],{}, 'confirm_smoker_words_threat');
+    ], key=null, thread_name='confirm_smoker_words_threat');
 
     // ask_mover_words_thread
-    dialog.addMessage('We gaan nu dezelfde oefening doen voor bewegen. ...', 'ask_mover_words_thread')
-    dialog.addQuestion(
-    'Welke woorden vind jij passen bij bewegen? Bewegen is...?',
-    async(answer) => {
-        // do nothing.
-    }, {key: 'mover_words'}, 'ask_mover_words_thread');
-    dialog.addAction('confirm_mover_words_threat', 'ask_mover_words_thread')
+    dialog.addMessage('We gaan nu dezelfde oefening doen voor bewegen. ...', thread_name='ask_mover_words_thread')
+    dialog.addQuestion('Welke woorden vind jij passen bij bewegen? Bewegen is...?',
+        handlers=[],
+        key='mover_words',
+        thread_name='ask_mover_words_thread');
+    dialog.addAction('confirm_mover_words_threat', thread_name='ask_mover_words_thread')
 
     // confirm_smoker_words_threat
     dialog.addQuestion('Je hebt {{vars.mover_words}} gekozen, klopt dat?', [
@@ -69,7 +67,7 @@ module.exports = function(controller) {
                 await convo.gotoThread('confirm_mover_words_threat');
             }
         }
-    ],{}, 'confirm_mover_words_threat');
+    ], key=null, thread_name='confirm_mover_words_threat');
 
     // define a 'likes_tacos' thread
     dialog.addMessage('HOORAY TACOS', 'likes_tacos');

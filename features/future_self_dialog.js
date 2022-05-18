@@ -20,7 +20,7 @@ module.exports = function(controller) {
         {
             pattern: 'ja',
             handler: async function(answer, convo, bot) {
-                await convo.gotoThread('ask_mover_words_thread');
+                await convo.gotoThread('why_smoker_words_thread');
             }
         },
         {
@@ -37,6 +37,20 @@ module.exports = function(controller) {
             }
         }
     ], key=null, thread_name='confirm_smoker_words_threat');
+
+    // why_smoker_words_thread
+    dialog.addQuestion('Waarom heb je deze woorden gekozen voor roken?',
+                        handler=async function(answer, convo, bot) {
+                            number_of_words = answer.split(' ').length;
+                            if (number_of_words > 5) {
+                                await convo.gotoThread('ask_mover_words_thread');
+                            } else {
+                                bot.say('Zou je dat in meer woorden kunnen omschrijven?')
+                                await convo.gotoThread('why_smoker_words_thread');
+                            }
+                        },
+                        key=null, thread_name='why_smoker_words_thread');
+
 
     // ask_mover_words_thread
     dialog.addMessage('We gaan nu dezelfde oefening doen voor bewegen. ...', thread_name='ask_mover_words_thread')
